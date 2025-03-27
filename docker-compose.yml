@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  online_song_library:
+    container_name: online_song_library
+    build: ./
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - ${REST_PORT}:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - ${POSTGRES_PORT}:5432
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres:
+
+networks:
+  song-library-network:
+    driver: bridge
