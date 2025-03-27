@@ -1,0 +1,333 @@
+definitions:
+  api.CreateSongHandler.request:
+    properties:
+      group:
+        example: Muse
+        type: string
+      song:
+        example: Supermassive Black Hole
+        type: string
+    type: object
+  api.CreateSongHandler.successResponse:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  api.DeleteSongHandler.successResponse:
+    properties:
+      success:
+        example: true
+        type: boolean
+    type: object
+  api.ErrorResponse:
+    properties:
+      error:
+        example: error text
+        type: string
+    type: object
+  api.GetAllSongsHandler.pagination:
+    properties:
+      page:
+        example: 1
+        type: integer
+      per_page:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    type: object
+  api.GetAllSongsHandler.successResponse:
+    properties:
+      pagination:
+        $ref: '#/definitions/api.GetAllSongsHandler.pagination'
+      songs:
+        items:
+          $ref: '#/definitions/models.Song'
+        type: array
+    type: object
+  api.GetSongHandler.successResponse:
+    properties:
+      page:
+        example: 1
+        type: integer
+      total:
+        example: 10
+        type: integer
+      verses:
+        example:
+        - '["ooh baby'
+        - ' don''t you know i suffer?"'
+        - ' "ooh baby'
+        - ' can you hear me moan?"]'
+        items:
+          type: string
+        type: array
+    type: object
+  api.UpdateSongHandler.successResponse:
+    properties:
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.Song:
+    properties:
+      group:
+        example: Muse
+        type: string
+      id:
+        example: 1
+        type: integer
+      link:
+        example: https://www.youtube.com/watch?v=Xsp3_a-PMTw
+        type: string
+      release_date:
+        example: "2006-06-19T00:00:00Z"
+        type: string
+      song:
+        example: Supermassive Black Hole
+        type: string
+      text:
+        example: |-
+          Ooh baby, don't you know I suffer?
+          ...
+        type: string
+    type: object
+  models.SongRaw:
+    properties:
+      group:
+        description: ID          uint   `json:"id"`
+        type: string
+      link:
+        type: string
+      release_date:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Получение всех песен с фильтрацией и пагинацией
+      parameters:
+      - description: ' '
+        in: query
+        name: group
+        type: string
+      - description: ' '
+        in: query
+        name: song
+        type: string
+      - description: ' '
+        in: query
+        name: release_date
+        type: string
+      - description: ' '
+        in: query
+        name: text
+        type: string
+      - description: ' '
+        in: query
+        name: link
+        type: string
+      - default: 1
+        description: ' '
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: ' '
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: received successfully
+          schema:
+            $ref: '#/definitions/api.GetAllSongsHandler.successResponse'
+        "404":
+          description: 'songs not found" example:{"error": "songs not found"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "422":
+          description: 'invalid release_date" example:{"error": "invalid release_date"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: 'internal server error" example:{"error": "internal server
+            error"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Получение всех песен с фильтрацией и пагинацией
+      tags:
+      - songs
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую песню, получая информацию о ней через запрос к
+        стороннему API, возвращает ID песни
+      parameters:
+      - description: название группы и песни
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateSongHandler.request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'successfully created" example:{"id": 1}'
+          schema:
+            $ref: '#/definitions/api.CreateSongHandler.successResponse'
+        "400":
+          description: 'invalid request" example:{"error": "invalid request"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: 'song not found" example:{"error": "song not found"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "422":
+          description: 'all field are required" example:{"error": "all field are required"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: 'internal server error" example:{"error": "internal server
+            error"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Добавление новой песни
+      tags:
+      - songs
+  /{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление песни по ID
+      parameters:
+      - description: song id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'deleted successfully" example:{"success": true}'
+          schema:
+            $ref: '#/definitions/api.DeleteSongHandler.successResponse'
+        "404":
+          description: 'song not found" example:{"error": "song not found"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "422":
+          description: 'invalid id" example:{"error": "invalid id"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: 'internal server error" example:{"error": "internal server
+            error"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Удаление песни
+      tags:
+      - songs
+    get:
+      consumes:
+      - application/json
+      description: Получение песни и пагинация текста по куплетам
+      parameters:
+      - description: song id
+        in: query
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: page number
+        in: query
+        name: page
+        type: integer
+      - default: 5
+        description: items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: received successfully
+          schema:
+            $ref: '#/definitions/api.GetSongHandler.successResponse'
+        "404":
+          description: 'song not found" example:{"error": "song not found"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "422":
+          description: 'invalid per_page" example:{"error": "invalid per_page"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: 'internal server error" example:{"error": "internal server
+            error"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Получение песни и пагинация текста
+      tags:
+      - songs
+    put:
+      consumes:
+      - application/json
+      description: Обновление песни по ID
+      parameters:
+      - description: song id
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: song update data
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.SongRaw'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'updated successfully" example:{"success": true}'
+          schema:
+            $ref: '#/definitions/api.UpdateSongHandler.successResponse'
+        "400":
+          description: 'invalid data" example:{"error": "invalid data"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: 'song not found" example:{"error": "song not found"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "422":
+          description: 'all fields are required" example:{"error": "all fields are
+            required"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: 'internal server error" example:{"error": "internal server
+            error"}'
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Обновление песни
+      tags:
+      - songs
+swagger: "2.0"

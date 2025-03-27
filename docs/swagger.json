@@ -1,0 +1,483 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "description": "Получение всех песен с фильтрацией и пагинацией",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Получение всех песен с фильтрацией и пагинацией",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "group",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "song",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "release_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "text",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": " ",
+                        "name": "link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": " ",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": " ",
+                        "name": "per_page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "received successfully",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetAllSongsHandler.successResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "songs not found\" example:{\"error\": \"songs not found\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "invalid release_date\" example:{\"error\": \"invalid release_date\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error\" example:{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новую песню, получая информацию о ней через запрос к стороннему API, возвращает ID песни",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Добавление новой песни",
+                "parameters": [
+                    {
+                        "description": "название группы и песни",
+                        "name": "song",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateSongHandler.request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successfully created\" example:{\"id\": 1}",
+                        "schema": {
+                            "$ref": "#/definitions/api.CreateSongHandler.successResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request\" example:{\"error\": \"invalid request\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "song not found\" example:{\"error\": \"song not found\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "all field are required\" example:{\"error\": \"all field are required\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error\" example:{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/{id}": {
+            "get": {
+                "description": "Получение песни и пагинация текста по куплетам",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Получение песни и пагинация текста",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "song id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 5,
+                        "description": "items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "received successfully",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetSongHandler.successResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "song not found\" example:{\"error\": \"song not found\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "invalid per_page\" example:{\"error\": \"invalid per_page\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error\" example:{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновление песни по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Обновление песни",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "song id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "song update data",
+                        "name": "song",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SongRaw"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated successfully\" example:{\"success\": true}",
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateSongHandler.successResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid data\" example:{\"error\": \"invalid data\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "song not found\" example:{\"error\": \"song not found\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "all fields are required\" example:{\"error\": \"all fields are required\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error\" example:{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление песни по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "songs"
+                ],
+                "summary": "Удаление песни",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "song id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deleted successfully\" example:{\"success\": true}",
+                        "schema": {
+                            "$ref": "#/definitions/api.DeleteSongHandler.successResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "song not found\" example:{\"error\": \"song not found\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "invalid id\" example:{\"error\": \"invalid id\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error\" example:{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.CreateSongHandler.request": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string",
+                    "example": "Muse"
+                },
+                "song": {
+                    "type": "string",
+                    "example": "Supermassive Black Hole"
+                }
+            }
+        },
+        "api.CreateSongHandler.successResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "api.DeleteSongHandler.successResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "api.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error text"
+                }
+            }
+        },
+        "api.GetAllSongsHandler.pagination": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "api.GetAllSongsHandler.successResponse": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/api.GetAllSongsHandler.pagination"
+                },
+                "songs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Song"
+                    }
+                }
+            }
+        },
+        "api.GetSongHandler.successResponse": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "verses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"ooh baby",
+                        " don't you know i suffer?\"",
+                        " \"ooh baby",
+                        " can you hear me moan?\"]"
+                    ]
+                }
+            }
+        },
+        "api.UpdateSongHandler.successResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.Song": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string",
+                    "example": "Muse"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "link": {
+                    "type": "string",
+                    "example": "https://www.youtube.com/watch?v=Xsp3_a-PMTw"
+                },
+                "release_date": {
+                    "type": "string",
+                    "example": "2006-06-19T00:00:00Z"
+                },
+                "song": {
+                    "type": "string",
+                    "example": "Supermassive Black Hole"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "Ooh baby, don't you know I suffer?\n..."
+                }
+            }
+        },
+        "models.SongRaw": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "ID          uint   `json:\"id\"`",
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "release_date": {
+                    "type": "string"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
