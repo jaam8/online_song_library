@@ -1,5 +1,6 @@
 # online_song_library
 
+[![wakatime](https://wakatime.com/badge/user/018badf6-44ca-4a0f-82e9-9b27db08764a/project/86150661-2ef5-4ed6-8382-d5601d8bde98.svg)](https://wakatime.com/badge/user/018badf6-44ca-4a0f-82e9-9b27db08764a/project/86150661-2ef5-4ed6-8382-d5601d8bde98)  
 Проект представляет собой API для работы с библиотекой песен.  
 Сервис реализован на Go и использует БД PostgreSQL и Swagger-документацией   
 Миграции для базы данных находятся в каталоге `/db/migrations`.
